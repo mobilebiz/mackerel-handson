@@ -1,0 +1,373 @@
+{
+  "description": "連続架電フロー",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "next": "OutgoingCall",
+          "event": "incomingRequest"
+        },
+        {
+          "event": "incomingParent"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "name": "OutgoingCall",
+      "type": "make-outgoing-call-v2",
+      "transitions": [
+        {
+          "next": "Gather",
+          "event": "answered"
+        },
+        {
+          "next": "SetStatusToBusy",
+          "event": "busy"
+        },
+        {
+          "next": "SetStatusToNoAnswer",
+          "event": "noAnswer"
+        },
+        {
+          "next": "SetStatusToFailed",
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "machine_detection_speech_threshold": "2400",
+        "detect_answering_machine": false,
+        "send_digits": "",
+        "sip_auth_username": "",
+        "offset": {
+          "x": 140,
+          "y": 260
+        },
+        "recording_status_callback": "",
+        "sip_auth_password": "",
+        "recording_channels": "mono",
+        "timeout": 60,
+        "machine_detection": "Enable",
+        "trim": "do-not-trim",
+        "record": false,
+        "machine_detection_speech_end_threshold": "1200",
+        "machine_detection_timeout": "30",
+        "from": "{{flow.channel.address}}",
+        "to": "{{contact.channel.address}}",
+        "machine_detection_silence_timeout": "5000"
+      }
+    },
+    {
+      "name": "Gather",
+      "type": "gather-input-on-call",
+      "transitions": [
+        {
+          "next": "SplitAnswer",
+          "event": "keypress"
+        },
+        {
+          "event": "speech"
+        },
+        {
+          "event": "timeout"
+        }
+      ],
+      "properties": {
+        "voice": "Polly.Takumi",
+        "number_of_digits": 1,
+        "speech_timeout": "auto",
+        "offset": {
+          "x": -30,
+          "y": 510
+        },
+        "loop": 3,
+        "finish_on_key": "#",
+        "say": "エラーが発生しました。エラー内容は次のとおりです。{{flow.data.message}}。 \n対応が可能な場合は、数字の１を押してください。",
+        "language": "ja-JP",
+        "stop_gather": true,
+        "gather_language": "en",
+        "profanity_filter": "true",
+        "timeout": 5
+      }
+    },
+    {
+      "name": "SplitAnswer",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "next": "SetStatusToDeny",
+          "event": "noMatch"
+        },
+        {
+          "next": "SayThanks",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "対応可能",
+              "arguments": [
+                "{{widgets.Gather.Digits}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.Gather.Digits}}",
+        "offset": {
+          "x": -50,
+          "y": 760
+        }
+      }
+    },
+    {
+      "name": "SayThanks",
+      "type": "say-play",
+      "transitions": [
+        {
+          "next": "SetStatusToAccept",
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "voice": "Polly.Takumi",
+        "offset": {
+          "x": 30,
+          "y": 1010
+        },
+        "loop": 1,
+        "say": "ありがとうございます。お手数をおかけいたしますが、よろしくお願いいたします。",
+        "language": "ja-JP"
+      }
+    },
+    {
+      "name": "RunFunction",
+      "type": "run-function",
+      "transitions": [
+        {
+          "event": "success"
+        },
+        {
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "service_sid": "ZS",
+        "environment_sid": "ZE",
+        "offset": {
+          "x": 620,
+          "y": 1240
+        },
+        "function_sid": "ZH",
+        "parameters": [
+          {
+            "value": "{{flow.data.idx}}",
+            "key": "idx"
+          },
+          {
+            "value": "{{flow.data.loop}}",
+            "key": "loop"
+          },
+          {
+            "value": "{{flow.data.message}}",
+            "key": "message"
+          }
+        ],
+        "url": "https://mackerel-XXXX-dev.twil.io/call"
+      }
+    },
+    {
+      "name": "SetStatusToFailed",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "AppendLog1",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "Failed",
+            "key": "status"
+          }
+        ],
+        "offset": {
+          "x": 500,
+          "y": 340
+        }
+      }
+    },
+    {
+      "name": "SetStatusToNoAnswer",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "AppendLog1",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "No Answer",
+            "key": "status"
+          }
+        ],
+        "offset": {
+          "x": 570,
+          "y": 520
+        }
+      }
+    },
+    {
+      "name": "SetStatusToBusy",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "AppendLog1",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "Busy",
+            "key": "status"
+          }
+        ],
+        "offset": {
+          "x": 670,
+          "y": 710
+        }
+      }
+    },
+    {
+      "name": "SetStatusToAccept",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "AppendLog2",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "Accept",
+            "key": "status"
+          }
+        ],
+        "offset": {
+          "x": 180,
+          "y": 1200
+        }
+      }
+    },
+    {
+      "name": "SetStatusToDeny",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "AppendLog1",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "Deny",
+            "key": "status"
+          }
+        ],
+        "offset": {
+          "x": -180,
+          "y": 1220
+        }
+      }
+    },
+    {
+      "name": "AppendLog1",
+      "type": "run-function",
+      "transitions": [
+        {
+          "next": "RunFunction",
+          "event": "success"
+        },
+        {
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "service_sid": "ZS",
+        "environment_sid": "ZE",
+        "offset": {
+          "x": 610,
+          "y": 990
+        },
+        "function_sid": "ZH",
+        "parameters": [
+          {
+            "value": "{{contact.channel.address}}",
+            "key": "to"
+          },
+          {
+            "value": "{{flow.variables.status}}",
+            "key": "status"
+          }
+        ],
+        "url": "https://mackerel-XXXX-dev.twil.io/log"
+      }
+    },
+    {
+      "name": "AppendLog2",
+      "type": "run-function",
+      "transitions": [
+        {
+          "event": "success"
+        },
+        {
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "service_sid": "ZS",
+        "environment_sid": "ZE",
+        "offset": {
+          "x": 260,
+          "y": 1490
+        },
+        "function_sid": "ZH",
+        "parameters": [
+          {
+            "value": "{{contact.channel.address}}",
+            "key": "to"
+          },
+          {
+            "value": "{{flow.variables.status}}",
+            "key": "status"
+          }
+        ],
+        "url": "https://mackerel-XXXX-dev.twil.io/log"
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}
