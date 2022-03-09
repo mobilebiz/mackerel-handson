@@ -8,6 +8,11 @@
  */
 const SteinStore = require('stein-js-client');
 const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Tokyo');
 exports.handler = async function (context, event, callback) {
   try {
     // Studioからパラメータを取得
@@ -34,7 +39,7 @@ exports.handler = async function (context, event, callback) {
       'sheet2',
       [
         {
-          発信日時: now.format('YYYY-MM-DD HH:mm:ss'),
+          発信日時: now.tz().format('YYYY-MM-DD HH:mm:ss'),
           発信先: name,
           発信先電話番号: number,
           ステータス: status,

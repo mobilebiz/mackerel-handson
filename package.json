@@ -8,10 +8,11 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "jest",
+    "test:call": "jest call.test.js",
+    "test:log": "jest log.test.js",
     "start": "twilio-run",
     "deploy": "twilio serverless:deploy",
-    "create:flow": "twilio api:studio:v2:flows:create nopm --friendly-name '連続架電フロー' --status published --definition \"`cat ./flows/call.json`\""
+    "create:flow": "twilio api:studio:v2:flows:create --friendly-name '連続架電フロー' --status published --definition \"`cat ./flows/call.json`\""
   },
   "dependencies": {
     "@twilio/runtime-handler": "1.2.2",

@@ -82,6 +82,7 @@
           "event": "speech"
         },
         {
+          "next": "SetStatusToDeny",
           "event": "timeout"
         }
       ],
@@ -166,13 +167,13 @@
         }
       ],
       "properties": {
-        "service_sid": "ZS",
-        "environment_sid": "ZE",
+        "service_sid": "ZScb16988bd36ab32c3dfe19f1e5f0dd91",
+        "environment_sid": "ZEd07744204b4c06719182bb2756ccfcd7",
         "offset": {
           "x": 620,
           "y": 1240
         },
-        "function_sid": "ZH",
+        "function_sid": "ZH85370969095d288a3ea3a299b4bcec1a",
         "parameters": [
           {
             "value": "{{flow.data.idx}}",
@@ -187,7 +188,7 @@
             "key": "message"
           }
         ],
-        "url": "https://mackerel-XXXX-dev.twil.io/call"
+        "url": ""
       }
     },
     {
@@ -229,7 +230,7 @@
           }
         ],
         "offset": {
-          "x": 570,
+          "x": 560,
           "y": 520
         }
       }
@@ -313,13 +314,13 @@
         }
       ],
       "properties": {
-        "service_sid": "ZS",
-        "environment_sid": "ZE",
+        "service_sid": "ZScb16988bd36ab32c3dfe19f1e5f0dd91",
+        "environment_sid": "ZEd07744204b4c06719182bb2756ccfcd7",
         "offset": {
           "x": 610,
           "y": 990
         },
-        "function_sid": "ZH",
+        "function_sid": "ZHcc75ebc4ada27310ea184aa467e2e41e",
         "parameters": [
           {
             "value": "{{contact.channel.address}}",
@@ -330,7 +331,7 @@
             "key": "status"
           }
         ],
-        "url": "https://mackerel-XXXX-dev.twil.io/log"
+        "url": ""
       }
     },
     {
@@ -345,13 +346,13 @@
         }
       ],
       "properties": {
-        "service_sid": "ZS",
-        "environment_sid": "ZE",
+        "service_sid": "ZScb16988bd36ab32c3dfe19f1e5f0dd91",
+        "environment_sid": "ZEd07744204b4c06719182bb2756ccfcd7",
         "offset": {
           "x": 260,
           "y": 1490
         },
-        "function_sid": "ZH",
+        "function_sid": "ZHcc75ebc4ada27310ea184aa467e2e41e",
         "parameters": [
           {
             "value": "{{contact.channel.address}}",
@@ -362,7 +363,7 @@
             "key": "status"
           }
         ],
-        "url": "https://mackerel-XXXX-dev.twil.io/log"
+        "url": ""
       }
     }
   ],
