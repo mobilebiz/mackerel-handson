@@ -8,20 +8,45 @@
  */
 // eventサンプル
 // {
-//   "request": {
-//     "headers": {
-//       "x-request-id": "647105f1-a917-4f9c-9f36-fc134fca05ab",
-//       "content-length": "80",
-//       "t-request-id": "RQ1e45c1594b8b9618c9f9c3d38137adc0",
-//       "content-type": "application/json",
-//       "user-agent": "Mackerel Webhook Agent (https://mackerel.io/)",
-//       "accept": "*/*"
-//     },
-//     "cookies": {}
+//   "orgName": "Macker...",
+//   "event": "alert",
+//   "imageUrl": "https://mackerel.io/embed/public/.../....png",
+//   "memo": "memo....",
+//   "host": {
+//     "id": "22D4...",
+//     "name": "app01",
+//     "url": "https://mackerel.io/orgs/.../hosts/...",
+//     "type": "unknown",
+//     "status": "working",
+//     "memo": "",
+//     "isRetired": false,
+//     "roles": [
+//       {
+//         "fullname": "Service: Role",
+//         "serviceName": "Service",
+//         "serviceUrl": "https://mackerel.io/orgs/.../services/...",
+//         "roleName": "Role",
+//         "roleUrl": "https://mackerel.io/orgs/.../services/..."
+//       }
+//     ]
 //   },
-//   "event": "sample",
-//   "message": "Sample Notification from Mackerel",
-//   "imageUrl": null
+//   "alert": {
+//     "openedAt": 1473129912,
+//     "closedAt": 1473130092,
+//     "createdAt": 1473129912693,
+//     "criticalThreshold": 1.9588528112516932,
+//     "duration": 5,
+//     "isOpen": true,
+//     "metricLabel": "MetricName",
+//     "metricValue": 2.255356387321597,
+//     "monitorName": "MonitorName",
+//     "monitorOperator": ">",
+//     "status": "critical",
+//     "trigger": "monitor",
+//     "id": "2bj...",
+//     "url": "https://mackerel.io/orgs/.../alerts/2bj...",
+//     "warningThreshold": 1.4665636369580741
+//   }
 // }
 const SteinStore = require('stein-js-client');
 const Twilio = require('twilio');
@@ -30,7 +55,8 @@ exports.handler = async function (context, event, callback) {
   try {
     // Mackerelからパラメータを取得
     // console.log(`🐞 ${JSON.stringify(event, null, '  ')}`);
-    const message = event.message || 'メッセージが取得できませんでした。';
+    // const message = event.message || 'メッセージが取得できませんでした。';
+    const message = event.memo || 'メッセージが取得できませんでした。';
 
     // ループ制御
     let idx = event.idx || 0; // インデックスパラメータを取得
